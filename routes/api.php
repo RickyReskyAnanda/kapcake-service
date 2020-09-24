@@ -230,7 +230,7 @@ Route::group([
 	'prefix' => 'toko-online'
 	], function(){
 
-	Route::get('profile','ProfileController@index');
+	Route::get('profile/{kodeToko}','ProfileController@index');
 	Route::get('kategori-produk/{kodeToko}','KategoriProdukController@index');
 	Route::get('produk/{kodeToko}','ProdukController@index');
 	Route::get('produk/{id}/{kodeToko}','ProdukController@show');
