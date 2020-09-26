@@ -1,0 +1,3 @@
+[30-Aug-2020 22:38:04 Asia/Makassar] PHP Fatal error:  Interface 'JsonSerializable' not found in /home/kapcakes/laravel/vendor/laravel/framework/src/Illuminate/Support/Collection.php on line 40
+[30-Aug-2020 22:56:53 Asia/Makassar] PHP Fatal error:  Interface 'JsonSerializable' not found in /home/kapcakes/laravel/vendor/laravel/framework/src/Illuminate/Support/Collection.php on line 40
+[30-Aug-2020 23:24:28 Asia/Makassar] PHP Fatal error:  Interface 'JsonSerializable' not found in /home/kapcakes/laravel/vendor/laravel/framework/src/Illuminate/Support/Collection.php on line 40
