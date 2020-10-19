@@ -52,7 +52,17 @@ return [
         // Isi false jika masih tahap development dan true jika sudah di production, default false (development)
         'isProduction'  => env('MIDTRANS_IS_PRODUCTION', false),
         'isSanitized'   => env('MIDTRANS_IS_SANITIZED', true),
-        'is3ds'         => env('MIDTRANS_IS_3DS', true),                
+        'is3ds'         => env('MIDTRANS_IS_3DS', true),
+
+
+        // Midtrans server key
+        'serverKeyMerchant'     => env('MIDTRANS_SERVERKEY_MERCHANT'),
+        // Midtrans client key
+        'clientKeyMerchant'     => env('MIDTRANS_CLIENTKEY_MERCHANT'),
+        // Isi false jika masih tahap development dan true jika sudah di production, default false (development)
+        'isProductionMerchant'  => env('MIDTRANS_IS_PRODUCTION_MERCHANT', false),
+        'isSanitizedMerchant'   => env('MIDTRANS_IS_SANITIZED_MERCHANT', true),
+        'is3dsMerchant'         => env('MIDTRANS_IS_3DS_MERCHANT', true),                
     ],
 
 ];

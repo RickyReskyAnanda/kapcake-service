@@ -235,6 +235,12 @@ Route::group([
 	Route::get('produk/{kodeToko}','ProdukController@index');
 	Route::get('produk/{id}/{kodeToko}','ProdukController@show');
 
+	//pesanan
+	Route::get('pesanan/{kodeToko}','PesananController@index');
+	Route::post('pesanan/{kodeToko}','PesananController@store');
+	Route::get('pesanan/{id}/{kodeToko}','PesananController@show');
+
+	Route::get('bayar','PembayaranController@index'); // ini sinkrosisasi data menu
 	// Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
 });
 
