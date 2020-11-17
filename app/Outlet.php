@@ -20,6 +20,11 @@ class Outlet extends Model
                 $model->bisnis_id = $user->bisnis_id;
         });
     }
+
+    public function tokoPesanan(){
+        return $this->hasMany(TokoPesanan::class,'outlet_id');
+    }
+
     public function aktivasi(){
         return $this->hasOne(Aktivasi::class, 'outlet_id')->where('is_batal',0);
     }

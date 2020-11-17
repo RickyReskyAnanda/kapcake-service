@@ -21,7 +21,7 @@ class TagihanController extends Controller
     public function index(Request $request)
     {
         try {   
-           $data =  $request->user()->bisnis
+           $data = $request->user()->bisnis
                         ->tagihan()
                         ->latest()
                         ->paginate();

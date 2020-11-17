@@ -12,6 +12,30 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+// Route::post('kasir/login', 'Kasir\UserController@login');
+Route::group([
+	// 'middleware' => ['auth:api'], 
+	'namespace' => 'TokoOnline', 
+	'prefix' => 'toko-online'
+	], function(){
+
+	Route::get('profile/{kodeToko}','ProfileController@index');
+	Route::get('kategori-produk/{kodeToko}','KategoriProdukController@index');
+	Route::get('produk/{kodeToko}','ProdukController@index');
+	Route::get('produk/{id}/{kodeToko}','ProdukController@show');
+
+	//pesanan
+	Route::get('pesanan/{kodeToko}','PesananController@index');
+	Route::post('pesanan/{kodeToko}','PesananController@store');
+	Route::get('pesanan/{id}/{kodeToko}','PesananController@show');
+
+	Route::post('pay/{kodeToko}','PaymentController@index'); // ini sinkrosisasi data menu
+	// Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
+});
+
+
+
 Route::post('version', function(){
 	return response(['version' => '1.2.4'], 200);
 });
@@ -223,26 +247,7 @@ Route::group([
 });
 
 
-// Route::post('kasir/login', 'Kasir\UserController@login');
-Route::group([
-	// 'middleware' => ['auth:api'], 
-	'namespace' => 'TokoOnline', 
-	'prefix' => 'toko-online'
-	], function(){
 
-	Route::get('profile/{kodeToko}','ProfileController@index');
-	Route::get('kategori-produk/{kodeToko}','KategoriProdukController@index');
-	Route::get('produk/{kodeToko}','ProdukController@index');
-	Route::get('produk/{id}/{kodeToko}','ProdukController@show');
-
-	//pesanan
-	Route::get('pesanan/{kodeToko}','PesananController@index');
-	Route::post('pesanan/{kodeToko}','PesananController@store');
-	Route::get('pesanan/{id}/{kodeToko}','PesananController@show');
-
-	Route::get('bayar','PembayaranController@index'); // ini sinkrosisasi data menu
-	// Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
-});
 
 
 Route::post('kasir/login', 'Kasir\UserController@login');
