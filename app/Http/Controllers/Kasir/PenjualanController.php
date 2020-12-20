@@ -147,6 +147,27 @@ class PenjualanController extends Controller
         }
     }
 
+
+    public function show(Request $request){
+        $filter = $request->validate([
+            'outlet_id' => 'required|integer',
+            'kode_pemesanan' => 'required|string'
+        ]);
+
+        $data = $request->user()->bisnis
+                ->penjualan()
+                ->with('item', 'item.menu.gambar')
+                ->where('outlet_id', $filter['outlet_id'])
+                ->where('kode_pemesanan', $filter['kode_pemesanan'])
+                ->first();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => new PenjualanResource($data),
+            'message' => ["Berhasil mengambil data"]
+        ], 200);
+    }
+
     private function validation(){
         return [
             'outlet_id' => 'required|integer',

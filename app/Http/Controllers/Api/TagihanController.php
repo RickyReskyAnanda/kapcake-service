@@ -183,13 +183,16 @@ class TagihanController extends Controller
      */
     public function notificationHandler(Request $request)
     {
-        $notif = new Veritrans_Notification();
-        \DB::transaction(function() use($notif) {
- 
-          $transaction = $notif->transaction_status;
-          $type = $notif->payment_type;
-          $orderId = $notif->order_id;
-          $fraud = $notif->fraud_status;
+        // $request = $request->all();
+        // \DB::transaction(function() use($request) {
+        // return $request->all();
+
+
+          $transaction = $request->transaction_status;
+          $type = $request->payment_type;
+          $orderId = $request->order_id;
+          // return $orderId;
+          $fraud = $request->fraud_status;
           $tagihan = Tagihan::where('kode_invoice',$orderId )->first();
             // $tagihan->status = 'success';
             // $tagihan->save();
@@ -204,11 +207,97 @@ class TagihanController extends Controller
                 // TODO merchant should decide whether this transaction is authorized or not in MAP
                 // $tagihan->addUpdate("Transaction order_id: " . $orderId ." is challenged by FDS");
                 $tagihan->setPending();
+
+                return "Transaction order_id: " . $orderId ." is challenged by FDS";
               } else {
                 // TODO set payment status in merchant's database to 'Success'
                 // $tagihan->addUpdate("Transaction order_id: " . $orderId ." successfully captured using " . $type);
-                $tagihan->setSuccess();
-              }
+                    foreach($tagihan->entry as $k => $d){
+
+                        $jmlAktivasi = $tagihan->bisnis
+                                ->aktivasi()
+                                ->where('paket_id',$d['paket_id'])
+                                ->where('outlet_id',$d['outlet_id'])
+                                ->where('is_batal', 0)
+                                ->count();
+
+                        //ambil lama berlangganan dan dapatkan data tanggan kadaluarsannya
+                        $paket = Paket::find($d->paket_id);
+                        $paketLamaBerlangganan = PaketLamaBerlangganan::find($d->paket_lama_berlangganan_id);
+
+                        if($jmlAktivasi < 1)
+                        {
+                            $tagihan->bisnis
+                                ->aktivasi()
+                                ->where('outlet_id', $d['outlet_id'])
+                                ->update([
+                                    'is_batal' => 1,
+                                ]);
+                            // menambahkan data aktivasi yang baru untuk paket yang berbeda saja 
+                            $tglKadaluarsa = date( 'Y-m-d', strtotime(date('Y-m-d').' + '.$paketLamaBerlangganan->jumlah_dalam_bulan.' months'));
+                            $tglTambahanWaktu = date('Y-m-d',strtotime($tglKadaluarsa.' + 2 weeks'));
+                            $tagihan->bisnis
+                                ->aktivasi()
+                                ->create([
+                                    'outlet_id' => $d->outlet_id,
+                                    'paket_id' => $d->paket_id,
+                                    'nama_paket' => $paket->nama_paket,
+                                    'kadaluarsa' => $tglKadaluarsa,
+                                    'tambahan_waktu' => $tglTambahanWaktu,
+                                    'lama_berlangganan' => $paketLamaBerlangganan->keterangan,
+                                    'is_kitchen' => 1,
+                                    'is_digimenu' => 1,
+                                    'is_batal' => 0,
+                                ]);
+                            
+                        }elseif($jmlAktivasi >= 1){
+                            $aktivasi = $tagihan->bisnis
+                                ->aktivasi()
+                                ->where('outlet_id',$d->outlet_id)
+                                ->where('paket_id', $d->paket_id)
+                                ->first();
+                            $tglKadaluarsa = date( 'Y-m-d', strtotime($aktivasi->kadaluarsa.' + '.$paketLamaBerlangganan->jumlah_dalam_bulan.' months'));
+                            $tglTambahanWaktu = date('Y-m-d',strtotime($tglKadaluarsa.' + 2 weeks'));
+                            $tagihan->bisnis
+                                ->aktivasi()
+                                ->where('outlet_id',$d->outlet_id)
+                                ->where('paket_id', $d->paket_id)
+                                ->update([
+                                    'nama_paket' => $paket->nama_paket,
+                                    'kadaluarsa' => $tglKadaluarsa,
+                                    'tambahan_waktu' => $tglTambahanWaktu,
+                                    'lama_berlangganan' => $paketLamaBerlangganan->keterangan,
+                                    'is_kitchen' => 1,
+                                    'is_digimenu' => 1,
+                                    'is_batal' => 0,
+                                ]);
+                        }
+
+
+                        // proses penandaan akses user admin
+                        $userAdmin = $tagihan->bisnis
+                                ->user()
+                                ->where('is_super_admin',1)
+                                ->first();
+                        foreach ($tagihan->entry as $key => $value) {
+                            OutletUser::firstOrCreate([
+                                    'bisnis_id' => $value->bisnis_id,
+                                    'outlet_id' => $value->outlet_id,
+                                    'user_id' => $userAdmin->id ?? 0
+                                ], 
+                                [
+                                    'bisnis_id' => $value->bisnis_id,
+                                    'outlet_id' => $value->outlet_id,
+                                    'user_id' => $userAdmin->id ?? 0
+                                ]
+                            );
+                        }
+                    }
+
+                    $tagihan->setSuccess();
+                    return "Transaction order_id: " . $orderId ." successfully captured using " . $type;
+
+                }
  
             }
  
@@ -216,7 +305,6 @@ class TagihanController extends Controller
  
             // TODO set payment status in merchant's database to 'Settlement'
             // $tagihan->addUpdate("Transaction order_id: " . $orderId ." successfully transfered using " . $type);
-            $tagihan->setSuccess();
             
             foreach($tagihan->entry as $k => $d){
 
@@ -299,34 +387,38 @@ class TagihanController extends Controller
                     );
                 }
             }
+            $tagihan->setSuccess();
+
+
+            return "Transaction order_id: " . $orderId ." successfully transfered using " . $type;
           } elseif($transaction == 'pending'){
             // TODO set payment status in merchant's database to 'Pending'
             // $tagihan->addUpdate("Waiting customer to finish transaction order_id: " . $orderId . " using " . $type);
             $tagihan->setPending();
+            return "Waiting customer to finish transaction order_id: " . $orderId . " using " . $type;
  
           } elseif ($transaction == 'deny') {
  
             // TODO set payment status in merchant's database to 'Failed'
             // $tagihan->addUpdate("Payment using " . $type . " for transaction order_id: " . $orderId . " is Failed.");
             $tagihan->setFailed();
- 
+            return "Payment using " . $type . " for transaction order_id: " . $orderId . " is denied.";
           } elseif ($transaction == 'expire') {
  
             // TODO set payment status in merchant's database to 'expire'
             // $tagihan->addUpdate("Payment using " . $type . " for transaction order_id: " . $orderId . " is expired.");
             $tagihan->setExpired();
- 
+            return "Payment using " . $type . " for transaction order_id: " . $orderId . " is expired.";
           } elseif ($transaction == 'cancel') {
  
             // TODO set payment status in merchant's database to 'Failed'
             // $tagihan->addUpdate("Payment using " . $type . " for transaction order_id: " . $orderId . " is canceled.");
             $tagihan->setFailed();
- 
+            return "Payment using " . $type . " for transaction order_id: " . $orderId . " is canceled.";
           }
  
-        });
- 
-        return;
+        // });
+        
     }
 
     public function updatedTagihan(Request $request){

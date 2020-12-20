@@ -34,13 +34,14 @@ Route::group([
 	// Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
 });
 
+Route::post('/notification/handler', 'Api\TagihanController@notificationHandler');
 
 
 Route::post('version', function(){
-	return response(['version' => '1.2.4'], 200);
+	return response(['version' => '1.2.5'], 200);
 });
 Route::post('version-try', function(){
-	return response(['version' => "1.2.4"], 200);
+	return response(['version' => "1.2.5"], 200);
 });
 
 Route::post('login', 'Api\UserController@login');
@@ -249,7 +250,6 @@ Route::group([
 
 
 
-
 Route::post('kasir/login', 'Kasir\UserController@login');
 Route::group([
 	'middleware' => ['auth:api'], 
@@ -262,13 +262,13 @@ Route::group([
 	Route::post('pelanggan','PelangganController@store');
 
 	Route::get('pemesanan','PemesananController@index');
-	
-	Route::get('pemesanan/show','PemesananController@show');
 	Route::post('pemesanan','PemesananController@store');
+	Route::get('pemesanan/show','PemesananController@show');
 
 	// -----
 	Route::get('penjualan','PenjualanController@index'); // ini sinkrosisasi data penjualan
 	Route::post('penjualan','PenjualanController@store');
+	Route::get('penjualan/show','PenjualanController@show');
 
 	Route::get('printer','PrinterController@index'); // ini sinkrosisasi data penjualan
 	Route::post('printer','PrinterController@store');
@@ -293,47 +293,48 @@ Route::group([
 });
 
 
-Route::post('kasir-potrait/login', 'KasirPotrait\UserController@login');
-Route::group([
-	'middleware' => ['auth:api'], 
-	'namespace' => 'KasirPotrait', 
-	'prefix' => 'kasir-potrait'
-], function(){
-	Route::get('outlet','OutletController@index');
+// Route::post('kasir-potrait/login', 'KasirPotrait\UserController@login');
+// Route::group([
+// 	'middleware' => ['auth:api'], 
+// 	'namespace' => 'KasirPotrait', 
+// 	'prefix' => 'kasir-potrait'
+// ], function(){
+// 	Route::get('outlet','OutletController@index');
 
-	Route::get('pelanggan','PelangganController@index');
-	Route::post('pelanggan','PelangganController@store');
+// 	Route::get('pelanggan','PelangganController@index');
+// 	Route::post('pelanggan','PelangganController@store');
 
-	Route::get('pemesanan','PemesananController@index');
-	Route::post('pemesanan','PemesananController@store');
+// 	Route::get('pemesanan','PemesananController@index');
+// 	Route::post('pemesanan','PemesananController@store');
 
-	// -----
-	Route::get('penjualan','PenjualanController@index'); // ini sinkrosisasi data penjualan
-	Route::post('penjualan','PenjualanController@store');
+// 	// -----
+// 	Route::get('penjualan','PenjualanController@index'); // ini sinkrosisasi data penjualan
+// 	Route::post('penjualan','PenjualanController@store');
+// 	Route::get('penjualan/{kodePemesanan}','PenjualanController@show');
 
-	Route::get('printer','PrinterController@index'); // ini sinkrosisasi data penjualan
-	Route::post('printer','PrinterController@store');
+// 	Route::get('printer','PrinterController@index'); // ini sinkrosisasi data penjualan
+// 	Route::post('printer','PrinterController@store');
 
-	Route::get('menu','MenuController@index'); // ini sinkrosisasi data menu
-	Route::get('kategori-menu','KategoriMenuController@index'); // ini sinkrosisasi data kategori menu
+// 	Route::get('menu','MenuController@index'); // ini sinkrosisasi data menu
+// 	Route::get('kategori-menu','KategoriMenuController@index'); // ini sinkrosisasi data kategori menu
 
-	Route::get('meja','MejaController@index'); // ini sinkrosisasi data meja
+// 	Route::get('meja','MejaController@index'); // ini sinkrosisasi data meja
 
-	Route::get('pajak','PajakController@index'); // ini sinkrosisasi data diskon
-	Route::get('diskon','DiskonController@index'); // ini sinkrosisasi data diskon
-	Route::get('biaya-tambahan','BiayaTambahanController@index'); // ini sinkrosisasi data diskon
-	Route::get('jenis-pemesanan','JenisPemesananController@index'); // ini sinkrosisasi data diskon
-	Route::get('satuan','SatuanController@index'); // ini sinkrosisasi data diskon
+// 	Route::get('pajak','PajakController@index'); // ini sinkrosisasi data diskon
+// 	Route::get('diskon','DiskonController@index'); // ini sinkrosisasi data diskon
+// 	Route::get('biaya-tambahan','BiayaTambahanController@index'); // ini sinkrosisasi data diskon
+// 	Route::get('jenis-pemesanan','JenisPemesananController@index'); // ini sinkrosisasi data diskon
+// 	Route::get('satuan','SatuanController@index'); // ini sinkrosisasi data diskon
 
-	// Route::post('pelanggan/{outlet}','PelangganController@store');
-	Route::post('update-profil','UserController@updateProfil'); // ini sinkrosisasi data menu
-	Route::post('update-password','UserController@updatePassword'); // ini sinkrosisasi data menu
+// 	// Route::post('pelanggan/{outlet}','PelangganController@store');
+// 	Route::post('update-profil','UserController@updateProfil'); // ini sinkrosisasi data menu
+// 	Route::post('update-password','UserController@updatePassword'); // ini sinkrosisasi data menu
 
-	Route::post('perangkat/logout','PerangkatController@logout'); // ini sinkrosisasi data menu
+// 	Route::post('perangkat/logout','PerangkatController@logout'); // ini sinkrosisasi data menu
 
-	Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
+// 	Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
 
-});
+// });
 
 
 Route::post('dapur/login', 'Dapur\UserController@login');

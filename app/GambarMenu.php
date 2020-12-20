@@ -18,9 +18,13 @@ class GambarMenu extends Model
             $model->bisnis_id = $user->bisnis_id;
         });
 
-        static::deleting(function ($model) {
-            if(file_exists ( $model->access_path ))
-            unlink($model->access_path);
-        });
+        // static::deleting(function ($model) {
+            // try {   
+                // unlink($model->access_path);
+
+            // } catch (\Exception $e) {
+                
+            // }
+        // });
     }
 }

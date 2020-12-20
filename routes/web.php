@@ -8,6 +8,9 @@ Route::get('/clear-cache', function() {
     return 'DONE'; //Return anything
 });
 Route::get('/','LandingPageController@index');
+Route::get('version',function(){
+	return "version";
+});
 
 // \
 
@@ -16,8 +19,8 @@ Route::get('/','LandingPageController@index');
 
 
 //// PAYMENT ONLY
-Route::post('/finish', function(){
-    return redirect('https://backoffice.kapcake.com');
+Route::post('/payment/finish', function(){
+    return redirect('https://bo.kapcake.com/app/pengaturan/tagihan');
 })->name('tagihan.finish');
 Route::post('/notification/handler', 'Api\TagihanController@notificationHandler')->name('notification.handler');
  ////.//
