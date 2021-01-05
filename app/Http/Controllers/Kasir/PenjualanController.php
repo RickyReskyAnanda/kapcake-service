@@ -29,8 +29,8 @@ class PenjualanController extends Controller
                 ->orderBy('tanggal_proses','desc')
                 ->orderBy('waktu_proses','desc')
                 ->orderBy('created_at','desc')
-                ->skip($request->nomor_urut)
-                ->limit(15)
+                ->skip($request->nomor_urut * 30)
+                ->limit(30)
                 ->get();
 
         return response()->json([

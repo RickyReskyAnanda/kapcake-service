@@ -17,6 +17,11 @@ class OutletController extends Controller
 {
     public function index(Request $request)
     {
+        $req = $request->validate([
+            'outlet_id' => 'required',
+            'perangkat_id' => 'required',
+        ]);
+
         $data = $request->user()->bisnis
                 ->outlet()
                 ->where('id_outlet', $request->outlet_id)

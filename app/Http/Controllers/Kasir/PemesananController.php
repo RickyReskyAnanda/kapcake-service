@@ -13,6 +13,7 @@ class PemesananController extends Controller
         $filter = $request->validate([
             'outlet_id' => 'required|integer',
             'nomor_urut' => 'required|integer',
+            'jumlah' => 'nullable|integer',
             'waktu_max' => 'required',
             'tanggal_max' => 'required',
             
@@ -29,8 +30,8 @@ class PemesananController extends Controller
                 ->orderBy('tanggal_simpan','desc')
                 ->orderBy('waktu_simpan','desc')
                 ->orderBy('id_pemesanan','desc')
-                ->skip($filter['nomor_urut'])
-                ->limit(15)
+                ->skip($request->nomor_urut * 30)
+                ->limit(30)
                 ->get();
 
         return response()->json([

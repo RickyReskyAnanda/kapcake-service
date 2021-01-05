@@ -21,6 +21,10 @@ class Outlet extends Model
         });
     }
 
+    public function bisnis(){
+        return $this->belongsTo(Bisnis::class,'bisnis_id');
+    }
+
     public function tokoPesanan(){
         return $this->hasMany(TokoPesanan::class,'outlet_id');
     }

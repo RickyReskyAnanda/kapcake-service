@@ -38,10 +38,10 @@ Route::post('/notification/handler', 'Api\TagihanController@notificationHandler'
 
 
 Route::post('version', function(){
-	return response(['version' => '1.2.5'], 200);
+	return response(['version' => '1.2.6'], 200);
 });
 Route::post('version-try', function(){
-	return response(['version' => "1.2.5"], 200);
+	return response(['version' => "1.2.6"], 200);
 });
 
 Route::post('login', 'Api\UserController@login');
