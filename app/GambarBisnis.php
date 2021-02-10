@@ -17,8 +17,8 @@ class GambarBisnis extends Model
             $model->link = asset($model->access_path);
         });
 
-        static::deleting(function ($model) {
-        	unlink($model->access_path);
-        });
+        //static::deleting(function ($model) {
+        //	unlink($model->access_path);
+        //});
     }
 }

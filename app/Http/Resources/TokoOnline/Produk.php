@@ -17,13 +17,17 @@ class Produk extends JsonResource
         $variasi = $this->variasi;
         $jmlVariasi = count($variasi);
 
+        $ket_harga = '';
+        if($jmlVariasi > 1) $ket_harga  = $jmlVariasi.' Variasi';
+        else $ket_harga = $variasi[0] ? number_format($variasi[0]->harga) : '';
+
         return [
                 'id' => (int)$this->id_menu,
-                'kategori' => $this->kategori->nama_kategori_menu ?? 'Lainnya',
+                'kategori_id' => $this->kategori_menu_id,
                 'nama' => $this->nama_menu,
-                'varian' => $jmlVariasi > 1 ? $jmlVariasi .' Variasi':'',
-                'mulai_dari' => $variasi[0] ? str_replace(",",".",number_format($variasi[0]->harga)) : '',
+                'ket_harga' => $ket_harga,
                 'thumb' => $this->thumbGambar->link ?? '',
+                // 'keterangan' => $this->keterangan,
         ];
     }
 }

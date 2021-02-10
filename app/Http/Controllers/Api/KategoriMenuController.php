@@ -74,7 +74,7 @@ class KategoriMenuController extends Controller
             DB::commit();
             return response([
                 'status' => 'success',
-                'message' =>  ["Kategori Menu berhasil ditambahkan"]
+                'message' =>  ["Kategori Menu berhasil dihapus"]
             ], 200);
         } catch (\Exception $e) {
             DB::rollback();

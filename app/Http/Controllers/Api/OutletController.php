@@ -19,13 +19,12 @@ class OutletController extends Controller
     {
         $this->authorize('view', Outlet::class);
 
-        // try {   
-            // $data = [];
+        try {   
             if($request->is_outlet_package == 1){
                 $data = $request->user()->bisnis
                         ->outlet()
                         // ->with('aktivasi')
-                        ->paginate();
+                        ->get();
           
                 return OutletPaketResource::collection($data);
             }
@@ -53,17 +52,12 @@ class OutletController extends Controller
                         ->outlet()
                         ->get();
 
-            // return response([
-            //     'data' => ,
-            //     'message' => 'Berhasil mengambil data'
-            // ]);
-
-        // } catch (\Exception $e) {
-        //     return response([
-        //         'status' => 'error',
-        //         'message' =>  ["Terjadi Kesalahan"]
-        //     ], 500);
-        // }
+        } catch (\Exception $e) {
+            return response([
+                'status' => 'error',
+                'message' =>  ["Terjadi Kesalahan"]
+            ], 500);
+        }
     }
 
     public function store(OutletRequest $request)

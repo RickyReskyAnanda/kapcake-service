@@ -25,7 +25,8 @@ class OutletController extends Controller
         $data = $request->user()->bisnis
                 ->outlet()
                 ->where('id_outlet', $request->outlet_id)
-                ->first();
+        ->first();
+    
         $data->load([
                     
                     'kategoriMenu' => function($q){
@@ -78,21 +79,21 @@ class OutletController extends Controller
 
         $outletTerpilih['url_logo'] = $bisnis->thumbLogo->link ?? '';
 
-        $pelanggan = $request->user()->bisnis->pelanggan ?? [];
+        $pelanggan = $request->user()->bisnis->pelanggan ?? null;
 
         return response()->json([
-            'jenis_pemesanan' => $data->jenisPemesanan ?? [],
-            'kategori_menu' => $data->kategoriMenu ?? [],
-            'kategori_meja' => $data->kategoriMeja ?? [],
-            'meja' => $data->meja ?? [],
+            'jenis_pemesanan' => $data->jenisPemesanan ?? null,
+            'kategori_menu' => $data->kategoriMenu ?? null,
+            'kategori_meja' => $data->kategoriMeja ?? null,
+            'meja' => $data->meja ?? null,
             'pelanggan' => PelangganResource::collection($pelanggan),
-            'pajak' => $data->pajakTerpilih ?? [],
-            'diskon' => $data->diskon ?? [],
-            'biaya_tambahan' => $data->biayaTambahan ?? [],
-            'pemesanan' => $data->pemesanan ? PesananResource::collection($data->pemesanan) : [],
-            'penjualan' => $data->penjualan ? PenjualanResource::collection($data->penjualan) : [],
+            'pajak' => $data->pajakTerpilih ?? null,
+            'diskon' => $data->diskon ?? null,
+            'biaya_tambahan' => $data->biayaTambahan ?? null,
+            'pemesanan' => $data->pemesanan ? PesananResource::collection($data->pemesanan) : null,
+            'penjualan' => $data->penjualan ? PenjualanResource::collection($data->penjualan) : null,
             'printer' => PrinterResource::collection($printer),
-            'outlet' => $outletTerpilih ?? [],
+            'outlet' => $outletTerpilih ?? null,
         ], 200);
     }
 

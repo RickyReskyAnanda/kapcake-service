@@ -66,7 +66,7 @@ class MenuController extends Controller
 
                 if($tersedia == 0){
                     $gambar = [];
-                    if($data['gambar'] ){
+                    if(isset($data['gambar']) ){
                         $gambar = BlobImageConvertion::image($data['gambar'], 'menu');
                     }
                     $menu = $request->user()->bisnis
@@ -134,6 +134,7 @@ class MenuController extends Controller
 
     public function update(MenuRequest $request, Menu $menu)
     {
+        // return $request->all();
         $this->authorize('update', $menu);
 
         $data = $request->validated();
@@ -150,7 +151,7 @@ class MenuController extends Controller
 
                 if($tersedia == 0){
                     $gambar = [];
-                    if($data['gambar'] ){
+                    if(isset($data['gambar']) ){
                         $gambar = BlobImageConvertion::image($data['gambar'], 'menu');
                     }
 

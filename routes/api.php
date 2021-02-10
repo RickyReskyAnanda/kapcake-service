@@ -238,6 +238,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::put('/tagihan/{tagihan}/status', 'Api\TagihanController@statusTagihan');
 	Route::get('/tagihan/get/updated', 'Api\TagihanController@updatedTagihan');
 });
+
 Route::group([
     'namespace' => 'Auth',
     'prefix' => 'password'
@@ -246,8 +247,6 @@ Route::group([
     Route::get('find/{token}', 'ResetPasswordController@find');
     Route::post('reset', 'ResetPasswordController@reset');
 });
-
-
 
 
 Route::post('kasir/login', 'Kasir\UserController@login');
@@ -280,8 +279,6 @@ Route::group([
 	Route::get('diskon','DiskonController@index'); // ini sinkrosisasi data diskon
 	Route::get('biaya-tambahan','BiayaTambahanController@index'); // ini sinkrosisasi data diskon
 	Route::get('jenis-pemesanan','TipePenjualanController@index'); // ini sinkrosisasi data diskon
-
-
 
 	// Route::post('pelanggan/{outlet}','PelangganController@store');
 	Route::post('update-profil','UserController@updateProfil'); // ini sinkrosisasi data menu
@@ -344,6 +341,7 @@ Route::group([
 	'prefix' => 'dapur'
 ], function(){
 	Route::get('pesanan','PesananController@index');
+	Route::post('pesanan-item','PesananItemController@update');
 });
 
 

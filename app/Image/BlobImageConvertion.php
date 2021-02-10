@@ -11,7 +11,6 @@ class BlobImageConvertion
     $name = uniqid().time().uniqid().'.' . explode('/', explode(':', substr($gambar, 0, strpos($gambar, ';')))[1])[1];
     
     $path = public_path('images/'.$category.'/').$name;
-    // system('sudo')
     $accessPath = 'images/'.$category.'/'.$name;
     $link1 = asset('images/'.$category.'/thumb_'.$name);
     $img = \Image::make($gambar);

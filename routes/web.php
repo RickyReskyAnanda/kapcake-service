@@ -22,6 +22,16 @@ Route::get('version',function(){
 Route::post('/payment/finish', function(){
     return redirect('https://bo.kapcake.com/app/pengaturan/tagihan');
 })->name('tagihan.finish');
+
+
+Route::post('/payment/unfinish', function(){
+    return redirect('https://bo.kapcake.com/app/pengaturan/tagihan');
+})->name('tagihan.unfinish');
+
+
+Route::post('/payment/error', function(){
+    return redirect('https://bo.kapcake.com/app/pengaturan/tagihan');
+})->name('tagihan.error');
 Route::post('/notification/handler', 'Api\TagihanController@notificationHandler')->name('notification.handler');
  ////.//
 /*

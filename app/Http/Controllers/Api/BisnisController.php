@@ -19,8 +19,8 @@ class BisnisController extends Controller
 			'data' => 'required',
 			'image' => 'nullable'
 		]);
-		DB::beginTransaction();
-		try {   
+		// DB::beginTransaction();
+		// try {   
 
 			$bisnis->update($data['data']);
 
@@ -37,11 +37,11 @@ class BisnisController extends Controller
 					->create($d);    
 				}
 			}
-			DB::commit();
-			return response('success',200);
-		} catch (\Exception $e) {
-			DB::rollback();
-			return response('error',500);
-		}
+		// 	DB::commit();
+		// 	return response('success',200);
+		// } catch (\Exception $e) {
+		// 	DB::rollback();
+		// 	return response('error',500);
+		// }
 	}
 }

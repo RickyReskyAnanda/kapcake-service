@@ -14,16 +14,36 @@ class UsersOutlet extends JsonResource
      */
     public function toArray($request)
     {
-            return [
-                'id' => $this->outlet->id_outlet,
-                'nama' => $this->outlet->nama_outlet ?? '',
-                'kode' => $this->outlet->aktivasi ? 77 : 88,
-                'nama_paket' => $this->outlet->aktivasi ? $this->outlet->aktivasi->nama_paket : 'Free',
-                'lama_berlangganan' => $this->outlet->aktivasi ? $this->outlet->aktivasi->lama_berlangganan : 'Selamanya',
-                'jatuh_tempo' => $this->outlet->aktivasi ? date_indo($this->outlet->aktivasi->kadaluarsa) :'-',
-                // free = 88
-                // berbayar = 77
-                // terkunci = 99
-            ];
+
+        $kode = 88;
+        if(isset($this->outlet->aktivasi))
+            if(isset($this->outlet->aktivasi->kadaluarsa) && isset($this->outlet->aktivasi->tambahan_waktu)){
+                $kadaluarsa = date('Y-m-d', strtotime($this->outlet->aktivasi->kadaluarsa));
+                $tambahan_waktu = date('Y-m-d', strtotime($this->outlet->aktivasi->tambahan_waktu));
+
+                if($kadaluarsa > date('Y-m-d', time()) ){
+                    $kode = 77;
+                }elseif($kadaluarsa <= date('Y-m-d', time()) && $tambahan_waktu > date('Y-m-d', time()) ){
+                    $kode = 78;
+                }elseif($tambahan_waktu < date('Y-m-d', time()) ){
+                    $kode = 88;
+                }
+            }else{
+                $kode = 88;
+            }
+
+        return [
+            'id' => $this->outlet->id_outlet,
+            'nama' => $this->outlet->nama_outlet ?? '',
+            'kode' => $kode,
+            'nama_paket' => isset($this->outlet->aktivasi) && $kode < ? $this->outlet->aktivasi->nama_paket : 'Free',
+            'lama_berlangganan' => $this->outlet->aktivasi ? $this->outlet->aktivasi->lama_berlangganan : 'Selamanya',
+            'jatuh_tempo' => $this->outlet->aktivasi ? date_indo($this->outlet->aktivasi->kadaluarsa) :'-',
+            'tanggal_kunci' => $this->outlet->aktivasi ? date_indo($this->outlet->aktivasi->tambahan_waktu) :'-'
+            // free = 88
+            // berbayar = 77
+            // kadaluarsa = 78
+            // terkunci = 99
+        ];
     }
 }

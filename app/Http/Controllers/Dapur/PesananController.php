@@ -8,11 +8,24 @@ use App\Http\Controllers\Controller;
 class PesananController extends Controller
 {
     public function index(Request $request){
-        // return count($this->data());
         try {   
 	    	return response([
 	    		'status' => 'success',
 	    		'data' =>  $this->data(),
+	    		'message' => 'Berhasil mengambil data'
+	    	],200);
+    	} catch (\Exception $e) {
+            return response([
+                'status' => 'error',
+                'message' =>  "Terjadi Kesalahan"
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id){
+    	 try {   
+	    	return response([
+	    		'status' => 'success',
 	    		'message' => 'Berhasil mengambil data'
 	    	],200);
     	} catch (\Exception $e) {
@@ -32,6 +45,7 @@ class PesananController extends Controller
 		    "kode_pemesanan"=> 32003830430, 
 		    "pesanan"=> [
 		      [
+		      	"id_item" =>
 		        "menu"=> [
 		          [
 		            "nama_variasi_menu"=> "", 
@@ -45,7 +59,8 @@ class PesananController extends Controller
 		          ]
 		        ], 
 		        "nama_tipe_penjualan"=> "Dine In"
-		      ], 
+		      ],
+
 		      [
 		        "menu"=> [
 		          [
@@ -56,6 +71,7 @@ class PesananController extends Controller
 		        ], 
 		        "nama_tipe_penjualan"=> "Booking"
 		      ], 
+
 		      [
 		        "menu"=> [
 		          [

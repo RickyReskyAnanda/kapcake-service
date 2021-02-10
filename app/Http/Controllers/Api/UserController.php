@@ -60,7 +60,6 @@ class UserController extends Controller
             ], 401);
         }
     }
-
     public function signup(Request $request)
     {
         $request->validate([
