@@ -36,7 +36,7 @@ class UsersOutlet extends JsonResource
             'id' => $this->outlet->id_outlet,
             'nama' => $this->outlet->nama_outlet ?? '',
             'kode' => $kode,
-            'nama_paket' => isset($this->outlet->aktivasi) && $kode < ? $this->outlet->aktivasi->nama_paket : 'Free',
+            'nama_paket' => isset($this->outlet->aktivasi) && $kode < 88? $this->outlet->aktivasi->nama_paket : 'Free',
             'lama_berlangganan' => $this->outlet->aktivasi ? $this->outlet->aktivasi->lama_berlangganan : 'Selamanya',
             'jatuh_tempo' => $this->outlet->aktivasi ? date_indo($this->outlet->aktivasi->kadaluarsa) :'-',
             'tanggal_kunci' => $this->outlet->aktivasi ? date_indo($this->outlet->aktivasi->tambahan_waktu) :'-'

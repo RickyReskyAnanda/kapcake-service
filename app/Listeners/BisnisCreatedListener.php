@@ -186,13 +186,13 @@ class BisnisCreatedListener
                 [
                     'bisnis_id' => $event->bisnis->id_bisnis,
                     'outlet_id' => $outlet->id_outlet,
-                    'nama_tipe_penjualan' => 'Dine In',
+                    'nama_tipe_penjualan' => 'Dine In/Makan Di Tempat',
                     'is_aktif' => 1,
                     'is_paten' => 1 
                 ],[
                     'bisnis_id' => $event->bisnis->id_bisnis,
                     'outlet_id' => $outlet->id_outlet,
-                    'nama_tipe_penjualan' => 'Take Away',
+                    'nama_tipe_penjualan' => 'Take Away/Bawa Pulang',
                     'is_aktif' => 1,
                     'is_paten' => 0 
                 ]

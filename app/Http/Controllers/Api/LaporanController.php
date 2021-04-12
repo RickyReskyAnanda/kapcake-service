@@ -22,28 +22,65 @@ class LaporanController extends Controller
 			    	->penjualan()
 			    	->select(DB::raw("
 			    		SUM(subtotal) as total_penjualan_kotor,  
-			    		SUM(total_diskon) as total_diskon,
-			    		SUM(IF(status = 'refund', total, 0)) as total_pengembalian_uang,
+			    		SUM(IF(status != 'sukses', total, 0)) as total_pengembalian_uang,
 			    		
-			    		SUM(total_biaya_tambahan) as total_biaya_tambahan,
-			    		SUM(total_pajak) as total_pajak,
-			    		SUM(total_diskon) as total_diskon,
-			    		SUM(total_pembulatan) as total_pembulatan
+			    		SUM(IF(status = 'sukses',total_biaya_tambahan,0)) as total_biaya_tambahan,
+			    		SUM(IF(status = 'sukses',total_pajak,0)) as total_pajak,
+			    		SUM(IF(status = 'sukses',total_diskon,0)) as total_diskon,
+			    		SUM(IF(status = 'sukses',total_pembulatan,0)) as total_pembulatan
 			    	"))
 			    	->where(function ($q) use ($request, $user){
-			    		if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
-					    	$q->where('outlet_id', $request->outlet_id);
-			    		if(	$request->has('tanggal_awal')  && 
+			    		// $q->where('status','sukses');
+		    		if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
+				    	$q->where('.outlet_id', $request->outlet_id);
+
+		    		if(	$request->has('tanggal_awal')  && 
 			    			$request->has('tanggal_akhir') && 
 			    			$request->tanggal_awal != '' && 
 			    			$request->tanggal_akhir != '' ){
-
-				    		$q->where('tanggal_proses','>=',$request->tanggal_awal);
-				    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
-			    		}
+			    		$q->whereBetween('tanggal_proses', [$request->tanggal_awal,$request->tanggal_akhir]);
+			    	}
 			    	})
 			    	->groupBy('bisnis_id')
 			    	->first();
+
+		// $total = $user
+		//     	->bisnis
+		//     	->penjualanItem()
+		//     	->select(DB::raw("
+		//     		SUM(penjualan_item.total) as total_penjualan_kotor, 
+		//     		round(SUM(penjualan_item.total_diskon) + sum((penjualan_item.total * penjualan.jumlah_diskon) / 100 )) as total_diskon, 
+		//     		SUM(IF(penjualan.status != 'sukses', total, 0)) as total_pengembalian_uang,
+
+		//     		SUM(IF(penjualan.status != 'sukses', penjualan.total_biaya_tambahan,0)) as total_biaya_tambahan,
+		//     		SUM(IF(penjualan.status != 'sukses', penjualan.total_pajak,0)) as total_pajak,
+		//     		SUM(penjualan.total_pembulatan) as total_pembulatan
+		//     	"))
+		//     	->where(function ($q) use ($request){
+		//     		// $q->where('penjualan.status','sukses');
+		//     		if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
+		// 		    	$q->where('penjualan_item.outlet_id', $request->outlet_id);
+
+		//     		if(	$request->has('tanggal_awal')  && 
+		// 	    			$request->has('tanggal_akhir') && 
+		// 	    			$request->tanggal_awal != '' && 
+		// 	    			$request->tanggal_akhir != '' ){
+		// 	    		$q->whereBetween('penjualan.tanggal_proses', [$request->tanggal_awal,$request->tanggal_akhir]);
+		// 	    	}
+
+		// 	    	if($request->has('pencarian') &&  $request->pencarian != ''){
+		// 	    		$q->where(function($q) use ($request){
+		// 				    $query->where('penjualan_item.nama_variasi_menu', 'like', '%'.$request->pencarian.'%');
+		// 				    $query->orWhere('penjualan_item.nama_menu', 'like', '%'.$request->pencarian.'%');
+		// 	    		});
+		// 	    	}
+		//     	})
+		//     	->leftJoin('penjualan','penjualan.id_penjualan','penjualan_item.penjualan_id')
+		//     	->first();
+
+
+
+
 		$data['total_penjualan_bersih'] = (float)$data['total_penjualan_kotor'] - (float)$data['total_diskon'] - (float)$data['total_pengembalian_uang'];
 		$data['total'] = ((float)$data['total_penjualan_bersih'] + 
 							(float)$data['total_biaya_tambahan'] + 
@@ -82,7 +119,7 @@ class LaporanController extends Controller
 		    		SUM(penjualan_item.jumlah) as total_penjualan_item,
 		    		SUM(penjualan_item.jumlah_refund) as total_pengembalian_item,
 		    		SUM(penjualan_item.total) as total_penjualan_kotor, 
-		    		round(SUM(penjualan_item.total_diskon) + sum((penjualan_item.total * penjualan.jumlah_diskon) / 100 )) as total_diskon,
+		    		round(SUM(penjualan_item.total_diskon) + (sum(penjualan_item.total) * penjualan.jumlah_diskon) / 100 ) as total_diskon,
 		    		SUM(penjualan_item.total_refund) as total_pengembalian_uang,
 		    		round(SUM(penjualan_item.total) - SUM(penjualan_item.total_refund) - SUM(penjualan_item.total_diskon) - sum((penjualan_item.total * penjualan.jumlah_diskon) / 100 )) as total_penjualan_bersih
 		    	"))
@@ -95,14 +132,13 @@ class LaporanController extends Controller
 			    			$request->has('tanggal_akhir') && 
 			    			$request->tanggal_awal != '' && 
 			    			$request->tanggal_akhir != '' ){
-			    		$q->where('penjualan.tanggal_proses', '>=', $request->tanggal_awal);
-			    		$q->where('penjualan.tanggal_proses', '<=', $request->tanggal_akhir);
+			    		$q->whereBetween('penjualan.tanggal_proses', [$request->tanggal_awal,$request->tanggal_akhir]);
 			    	}
 
-			    	if($request->has('pencarian')){
+			    	if($request->has('pencarian') && $request->pencarian != ''){
 			    		$q->where(function($q) use ($request){
-						    $query->where('nama_variasi_menu', 'like', '%'.$request->pencarian.'%');
-						    $query->orWhere('nama_menu', 'like', '%'.$request->pencarian.'%');
+						    $query->where('penjualan_item.nama_variasi_menu', 'like', '%'.$request->pencarian.'%');
+						    $query->orWhere('penjualan_item.nama_menu', 'like', '%'.$request->pencarian.'%');
 			    		});
 			    	}
 		    	})
@@ -119,12 +155,11 @@ class LaporanController extends Controller
 		    		SUM(penjualan_item.jumlah) as total_penjualan_item,
 		    		SUM(penjualan_item.jumlah_refund) as total_pengembalian_item,
 		    		SUM(penjualan_item.total) as total_penjualan_kotor, 
-		    		round(SUM(penjualan_item.total_diskon) + sum((penjualan_item.total * penjualan.jumlah_diskon) / 100 )) as total_diskon, 
+		    		round(SUM(penjualan_item.total_diskon) + (sum(penjualan_item.total) * penjualan.jumlah_diskon) / 100 ) as total_diskon, 
 		    		round(SUM(penjualan_item.total_refund)) as total_pengembalian_uang,
 		    		round(SUM(penjualan_item.total) - SUM(penjualan_item.total_refund) - SUM(penjualan_item.total_diskon) - sum((penjualan_item.total * penjualan.jumlah_diskon) / 100 )) as total_penjualan_bersih 
 		    	"))
 		    	->where(function ($q) use ($request){
-		    		$q->where('penjualan.status','sukses');
 		    		if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
 				    	$q->where('penjualan_item.outlet_id', $request->outlet_id);
 
@@ -132,19 +167,18 @@ class LaporanController extends Controller
 			    			$request->has('tanggal_akhir') && 
 			    			$request->tanggal_awal != '' && 
 			    			$request->tanggal_akhir != '' ){
-			    		$q->where('penjualan.tanggal_proses', '>=', $request->tanggal_awal);
-			    		$q->where('penjualan.tanggal_proses', '<=', $request->tanggal_akhir);
+			    		$q->whereBetween('penjualan.tanggal_proses', [$request->tanggal_awal,$request->tanggal_akhir]);
 			    	}
 
-			    	if($request->has('pencarian')){
+			    	if($request->has('pencarian') &&  $request->pencarian != ''){
 			    		$q->where(function($q) use ($request){
-						    $query->where('nama_variasi_menu', 'like', '%'.$request->pencarian.'%');
-						    $query->orWhere('nama_menu', 'like', '%'.$request->pencarian.'%');
+						    $query->where('penjualan_item.nama_variasi_menu', 'like', '%'.$request->pencarian.'%');
+						    $query->orWhere('penjualan_item.nama_menu', 'like', '%'.$request->pencarian.'%');
 			    		});
 			    	}
 		    	})
 		    	->leftJoin('penjualan','penjualan.id_penjualan','penjualan_item.penjualan_id')
-		    	->first(20);
+		    	->first();
 		
 		return response()->json([
 			'status' => 'success',
